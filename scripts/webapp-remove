@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if [[ -z "$1" ]]; then
+    echo "Usage: webapp-remove <APP_NAME>"
+    echo ""
+    echo "Example: webapp-remove Whatsapp"
+    exit 1
+fi
+
+APP_NAME="$1"
+
+ICON_PATH="$HOME/.local/share/applications/webapps-icon/$APP_NAME.png"
+DESKTOP_FILE="$HOME/.local/share/applications/$APP_NAME.desktop"
+
+if [[ ! -s "$ICON_PATH" && ! -s "$DESKTOP_FILE" ]]; then
+    echo "Failed to get \"$APP_NAME\". are you sure you used the correct name?"
+    exit 1
+fi
+
+read -p "Are you sure you wanna remove \"$APP_NAME\"? [y/n] " confirm
+
+case $confirm in
+    [yY][eE][sS]|[yY]) ;;
+    *) 
+        echo "cancelled. Bye bye!~ 🐰"
+        exit 1
+        ;;
+esac
+
+echo "Removing: "
+echo "  $ICON_PATH"
+echo "  $DESKTOP_FILE"
+echo ""
+
+rm -f "$ICON_PATH"
+rm -f "$DESKTOP_FILE"
+
+echo "All done!~ $APP_NAME has been successfully removed! 🎉🎉"
