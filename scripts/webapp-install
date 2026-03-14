@@ -42,14 +42,14 @@ fi
 read -p "Do you wanna add custom description? [y/n] " confirm_desc
 
 case $confirm_desc in
-    [yY][eE][sS]|[yY]) ;;
+    [yY][eE][sS]|[yY]) 
+        read -p "Input your app desc: " APP_DESC
+        ;;
     *) 
-        echo "cancelled. Bye bye!~ 🐰"
-        exit 1
+        APP_DESC="A fluffy shortcut to the web~ 🐰"
         ;;
 esac
 
-read -p "Input your app desc: " APP_DESC
 
 EXEC_COMMAND="$BROWSER --app=$APP_URL"
 
