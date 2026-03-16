@@ -22,6 +22,8 @@ if ! command -v brave &> /dev/null; then
     exit 1
 fi
 
+SAFE_NAME=$(echo "$APP_NAME" | tr ' ' '-') # "osu! lazer" -> "osu!-lazer"
+
 if [[ $# -lt 3 ]]; then
     FAVICON_URL="https://www.google.com/s2/favicons?domain=${APP_URL}&sz=128"
 else
@@ -30,7 +32,7 @@ fi
 
 ICON_DIR="$HOME/.local/share/applications/webapps-icon"
 mkdir -p "$ICON_DIR"
-ICON_PATH="$ICON_DIR/$APP_NAME.png"
+ICON_PATH="$ICON_DIR/$SAFE_NAME.png"
 
 echo "Installing $APP_URL's favicon..."
 
@@ -51,10 +53,17 @@ case $confirm_desc in
 esac
 
 
-EXEC_COMMAND="$BROWSER --app=$APP_URL"
+PROFILE_PATH="$HOME/.local/share/webapps/$SAFE_NAME"
 
-SAFE_NAME=$(echo "$APP_NAME" | tr ' ' '-') # "osu! lazer" -> "osu!-lazer"
-DESKTOP_FILE="$HOME/.local/share/applications/$APP_NAME.desktop"
+EXEC_COMMAND="$BROWSER \
+--app="$APP_URL" \
+--class=WebApp-$APP_NAME \
+--user-data-dir="$PROFILE_PATH" \
+--no-first-run \
+--disable-extensions"
+# EXEC_COMMAND="$BROWSER --app=$APP_URL"
+
+DESKTOP_FILE="$HOME/.local/share/applications/$SAFE_NAME.desktop"
 
 cat > "$DESKTOP_FILE" <<EOF
 [Desktop Entry]
