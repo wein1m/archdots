@@ -7,8 +7,8 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 
-APP_NAME="$1"
-APP_URL="$2"
+APP_NAME=$( echo "$1" | tr "[:upper:]" "[:lower:]" )
+APP_URL=$( echo "$2" | tr "[:upper:]" "[:lower:]" )
 
 if [[ -z "$APP_NAME" || -z $APP_URL ]]; then
     echo "What? you want me to create ghost webapp?.. give me the webapp you want to make.. bad bunny."
@@ -57,18 +57,19 @@ PROFILE_PATH="$HOME/.local/share/webapps/$SAFE_NAME"
 
 EXEC_COMMAND="$BROWSER \
 --app="$APP_URL" \
---class=WebApp-$APP_NAME \
+--class=WebApp-$SAFE_NAME \
 --user-data-dir="$PROFILE_PATH" \
 --no-first-run \
 --disable-extensions"
-# EXEC_COMMAND="$BROWSER --app=$APP_URL"
 
 DESKTOP_FILE="$HOME/.local/share/applications/$SAFE_NAME.desktop"
+
+TITLE_NAME=$(echo "${APP_NAME^}") # capitalize first letter
 
 cat > "$DESKTOP_FILE" <<EOF
 [Desktop Entry]
 Type=Application
-Name=$APP_NAME
+Name=$TITLE_NAME
 Comment=$APP_DESC
 Icon=$ICON_PATH
 Exec=$EXEC_COMMAND
@@ -79,4 +80,4 @@ EOF
 chmod +x "$DESKTOP_FILE"
 update-desktop-database ~/.local/share/applications
 
-echo "All done!~ $APP_NAME can be launched directly from your launcher!"
+echo "All done!~ $TITLE_NAME can be launched directly from your launcher!"

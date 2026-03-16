@@ -13,7 +13,7 @@ ICON_PATH="$HOME/.local/share/applications/webapps-icon/$APP_NAME.png"
 DESKTOP_FILE="$HOME/.local/share/applications/$APP_NAME.desktop"
 PROFILE_PATH="$HOME/.local/share/webapps/$APP_NAME"
 
-if [[ ! -s "$ICON_PATH" && ! -s "$DESKTOP_FILE" ]]; then
+if [[ ! -s "$ICON_PATH" && ! -s "$DESKTOP_FILE" && ! -s "$PROFILE_PATH" ]]; then
     echo "Failed to get \"$APP_NAME\". are you sure you used the correct name?"
     exit 1
 fi
