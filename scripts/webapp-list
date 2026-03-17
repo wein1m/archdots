@@ -1,0 +1,25 @@
+#!/bin/bash
+
+WEBAPPS_DIR="$HOME/.local/share/webapps"
+
+if [[ ! -d $WEBAPPS_DIR ]]; then
+    echo "BEEP! \"$WEBAPPS_DIR\" not found."
+    exit 1
+fi
+
+count=$(ls -l "$WEBAPPS_DIR" | grep -c ^d)
+
+echo "🐰 Installed webapps ($count):"
+
+if [ "$count" -eq 0 ]; then
+    echo ""
+    echo "Oops, it seems you have no webapps installed.."
+    echo "Try install one using my webapp-install script!"
+    exit 1
+fi
+
+for webapp in "$WEBAPPS_DIR"/*
+do
+    [[ -d $webapp ]] || continue
+    echo "❥ $(basename "$webapp")"
+done
