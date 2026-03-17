@@ -1,45 +1,42 @@
 #!/bin/bash
 
-if [[ -z "$1" ]]; then
+if [[ -z "$1" || -z "$2" ]]; then
     echo "Usage: webapp-install <APP_NAME> <APP_URL>"
     echo ""
     echo "Example: webapp-install Whatsapp https://web.whatsapp.com"
     exit 1
 fi
 
-APP_NAME=$( echo "$1" | tr "[:upper:]" "[:lower:]" )
-APP_URL=$( echo "$2" | tr "[:upper:]" "[:lower:]" )
-
-if [[ -z "$APP_NAME" || -z $APP_URL ]]; then
-    echo "What? you want me to create ghost webapp?.. give me the webapp you want to make.. bad bunny."
-    exit 1
-fi
-
 BROWSER="brave"
 
-if ! command -v brave &> /dev/null; then
-    echo "failed to get $BROWSER. are you sure it's installed?"
-    exit 1
-fi
-
-SAFE_NAME=$(echo "$APP_NAME" | tr ' ' '-') # "osu! lazer" -> "osu!-lazer"
-
-if [[ $# -lt 3 ]]; then
-    FAVICON_URL="https://www.google.com/s2/favicons?domain=${APP_URL}&sz=128"
-else
-    FAVICON_URL="$3"
-fi
-
 ICON_DIR="$HOME/.local/share/applications/webapps-icon"
-mkdir -p "$ICON_DIR"
+PROFILE_DIR="$HOME/.local/share/webapps"
+DESKTOP_DIR="$HOME/.local/share/applications"
+
+APP_NAME=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+APP_URL=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+SAFE_NAME=$(echo "$APP_NAME" | tr ' ' '-')
+TITLE_NAME=$(echo "${APP_NAME^}")
+
 ICON_PATH="$ICON_DIR/$SAFE_NAME.png"
+PROFILE_PATH="$PROFILE_DIR/$SAFE_NAME"
+DESKTOP_FILE="$DESKTOP_DIR/$SAFE_NAME.desktop"
 
-echo "Installing $APP_URL's favicon..."
 
-if ! curl -fsSL -o "$ICON_PATH" "$FAVICON_URL" || [[ ! -s "$ICON_PATH" ]]; then
-    echo "BEEP! favicon download failed... guess the website doesn't like you."
+error() {
+    echo "BEEP! Error occurred!~~ $1"
     exit 1
-fi
+}
+
+command -v $BROWSER &> /dev/null || error "failed to get $BROWSER. Are you sure it's installed?"
+
+
+FAVICON_URL="${3:-https://www.google.com/s2/favicons?domain=${APP_URL}&sz=128}"
+echo "Installing $APP_URL's favicon..."
+mkdir -p "$ICON_DIR"
+
+curl -fsSL -o "$ICON_PATH" "$FAVICON_URL" || error "favicon download failed... guess the website doesn't like you."
+
 
 read -p "Do you wanna add custom description? [y/n] " confirm_desc
 
@@ -53,18 +50,10 @@ case $confirm_desc in
 esac
 
 
-PROFILE_PATH="$HOME/.local/share/webapps/$SAFE_NAME"
-
 EXEC_COMMAND="$BROWSER \
 --app="$APP_URL" \
---class=WebApp-$SAFE_NAME \
 --user-data-dir="$PROFILE_PATH" \
---no-first-run \
---disable-extensions"
-
-DESKTOP_FILE="$HOME/.local/share/applications/$SAFE_NAME.desktop"
-
-TITLE_NAME=$(echo "${APP_NAME^}") # capitalize first letter
+--no-first-run"
 
 cat > "$DESKTOP_FILE" <<EOF
 [Desktop Entry]
@@ -78,6 +67,6 @@ StartupNotify=true
 EOF
 
 chmod +x "$DESKTOP_FILE"
-update-desktop-database ~/.local/share/applications
+update-desktop-database $HOME/.local/share/applications
 
 echo "All done!~ $TITLE_NAME can be launched directly from your launcher!"
