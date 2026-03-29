@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: func <COMMAND_NAME>"
+    echo ""
+    echo "Example: func webapp-install"
+    exit 1
+fi
+
+cmd="$1"
+SCRIPT_PATH="$HOME/.local/bin"
+
+target="$SCRIPT_PATH/$cmd"
+
+if [ -f "$target" ]; then
+    nvim -c "set nomodifiable" "$target"
+else
+    echo "Cannot find '$cmd' ...It's not hiding. It just doesn't exist."
+    exit 1
+fi
