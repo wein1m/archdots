@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ -z $1 ]]; then
-    echo "Usage: $0 /path/to/skin.osz"
+    echo "Usage: osk-handler /path/to/skin.osz"
     exit 1
 fi
 
@@ -13,9 +13,6 @@ FILENAME="$(basename -- "$FILE" .osk)"
 if [ -d "$SKIN_DIR/$FILENAME" ]; then
     echo "Duplicate songs detected ⚠️"
     notify-send "osz-handler.sh" "Found duplicate skin of $FILENAME" -u low -i "$HOME/.local/share/icons/osu.ico" -e 
-    exit 1
-else
-    echo "just go on.."
     exit 1
 fi
 
